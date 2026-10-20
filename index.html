@@ -97,6 +97,9 @@ svg.ic{width:1em;height:1em;fill:currentColor;flex:none}
   box-shadow:var(--shadow);
 }
 @media (prefers-color-scheme: dark){ .big-list{border-color:var(--teal)} }
+.big-list{justify-content:center;text-align:center;position:relative}
+.big-list .t{align-items:center}
+.big-list .count-pill{position:absolute;right:12px;top:12px;margin:0;min-width:38px;height:38px;font-size:18px;padding:0 10px}
 .big-list .ic{color:var(--teal-d)}
 .big-list .t small{color:var(--muted);opacity:1}
 .count-pill{
@@ -709,7 +712,7 @@ table.pl tr.tot td{font-weight:900;border-bottom:0}
         '<header class="hero">' +
           '<img class="logo" src="icons/logo.png" alt="Air Toronto logo">' +
           '<h1>Ramp <span>Load</span> Master</h1>' +
-          '<p>Snap your load sheet. Keep it. Works offline.</p>' +
+          '<p>Digital On / Off Loading Instruction (LI) Mobile System</p>' +
         '</header>' +
         '<main class="actions">' +
           '<button class="big big-on" data-go="#/capture/on">' + ic('takeoff') +
