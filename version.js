@@ -5,5 +5,5 @@
    - The offline cache name is built from it, so phones that already
      have the app will detect the change and offer to update.
 ------------------------------------------------------------------- */
-self.APP_VERSION = "1.2.7";
+self.APP_VERSION = "1.2.8";
 self.APP_BUILD = "2026-10-20";

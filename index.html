@@ -1064,11 +1064,12 @@ table.pl tr.tot td{font-weight:900;border-bottom:0}
   function acFromRaw(raw) {
     var r = String(raw || '').toUpperCase().replace(/[\s-]+/g, '');
     if (!r) return '';
+    // accept "B777-300ER", "BOEING 787-9", "AIRBUS A330-300" style too
+    var tries = [r, r.replace(/^(BOEING|AIRBUS)/, ''), r.replace(/^(BOEING|B)(?=7)/, '')];
     for (var i = 0; i < FLEET_ORDER.length; i++) {
       var k = FLEET_ORDER[i];
-      if (k === r) return k;
-      var hit = (FLEET[k].codes || []).some(function (c) { return c.toUpperCase().replace(/[\s-]+/g, '') === r; });
-      if (hit) return k;
+      var codes = [k].concat(FLEET[k].codes || []).map(function (c) { return c.toUpperCase().replace(/[\s-]+/g, ''); });
+      if (tries.some(function (t) { return codes.indexOf(t) !== -1; })) return k;
     }
     return '';
   }
@@ -1285,7 +1286,7 @@ table.pl tr.tot td{font-weight:900;border-bottom:0}
       inner = '<span class="bh"><b>' + bulkLabel(s.pos) + '</b><span class="k">' + (lines.length ? pcs + ' pcs · ' + fmtKg(kg) + ' kg' : 'Tap to add') + '</span></span>' +
         lines.slice(0, 3).map(function (l) {
           var lc = typeColor(l.type);
-          return '<span class="bl"' + (lc ? ' style="color:' + lc + '"' : '') + '>' + esc([l.type, l.dest, (l.pcs || 0) + ' pcs', fmtKg(num(l.kg)) + ' kg', l.notes].filter(Boolean).join(' · ')) + '</span>';
+          return '<span class="bl"' + (lc ? ' style="color:' + lc + '"' : '') + '>' + esc([l.type, l.dest, (l.pcs || 0) + ' pcs', l.kg ? fmtKg(num(l.kg)) + ' kg' : '', l.notes].filter(Boolean).join(' · ')) + '</span>';
         }).join('') + (lines.length > 3 ? '<span class="bl">+' + (lines.length - 3) + ' more</span>' : '') + tick;
     } else if (!act) {
       inner = '<b>' + s.pos + '</b><span class="k">+</span>';
