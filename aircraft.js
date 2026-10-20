@@ -39,9 +39,9 @@ self.RLM_FLEET = {
   },
   B77W: {
     name: 'Boeing 777-300ER', short: '777-300ER', kind: 'wide',
-    codes: ['B77W', '77W', '777-300ER', '773'],
+    codes: ['B77W', '77W', '777-300ER', '777-300EW', '773'],
     fwd: { rows: [6, 6], pal: [4, 4], door: 0.2, doorW: 106 },
-    aft: { rows: [5, 5], pal: [3, 3], door: 0.2, doorW: 106 },
+    aft: { rows: [5, 5], pal: [3, 3], door: 0.15, doorW: 106 },
     bulk: { door: 0.5, doorW: 36 }
   },
   B77L: {

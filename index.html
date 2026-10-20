@@ -398,10 +398,10 @@ select.in{appearance:none;-webkit-appearance:none;background-image:linear-gradie
 .hhd .addp{width:calc(var(--u)*30px);height:calc(var(--u)*30px);border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:calc(var(--u)*22px);padding:0;flex:none}
 .signb{position:absolute;box-sizing:border-box;border-radius:calc(var(--u)*10px);border:calc(var(--u)*2.2px) dashed var(--ghost-ln);background:var(--card);color:var(--ink);
   display:flex;align-items:center;gap:calc(var(--u)*8px);padding:0 calc(var(--u)*8px);text-align:left;overflow:hidden}
-.signb .l{font-size:calc(var(--u)*10.5px);font-weight:900;color:var(--muted);letter-spacing:.3px;line-height:1.1}
-.signb .v{font-size:calc(var(--u)*13px);font-weight:900;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.signb .l{font-size:calc(var(--u)*13px);font-weight:900;color:var(--muted);letter-spacing:.3px;line-height:1.1}
+.signb .v{font-size:calc(var(--u)*17px);font-weight:900;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .signb .t{display:flex;flex-direction:column;min-width:0;flex:1}
-.signb img{height:84%;max-width:38%;object-fit:contain;background:#fff;border-radius:calc(var(--u)*6px);flex:none}
+.signb img{height:80%;max-width:45%;object-fit:contain;background:#fff;border-radius:calc(var(--u)*6px);flex:none}
 .signb.ok{border-style:solid;border-color:var(--done)}
 .signb.ok .l{color:var(--done)}
 .cmpl{position:absolute;box-sizing:border-box;border-radius:calc(var(--u)*14px);font-weight:900;font-size:calc(var(--u)*19px);letter-spacing:.5px;
@@ -1168,7 +1168,7 @@ table.pl tr.tot td{font-weight:900;border-bottom:0}
   /* =============================================================
      Aircraft layout geometry (SVG units, 400 wide)
   ============================================================= */
-  var VW = 400, KIN = 1.25, PITCH = 64, PALL = 96, HDR = 36, SIGN = 56;
+  var VW = 400, KIN = 1.25, PITCH = 64, PALL = 96, HDR = 36, SIGN = 100;
 
   function buildLayout(key) {
     var ac = FLEET[key];
