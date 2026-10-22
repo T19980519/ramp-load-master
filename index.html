@@ -1170,7 +1170,20 @@ table.pl tr.tot td{font-weight:900;border-bottom:0}
   ============================================================= */
   var VW = 400, KIN = 1.25, PITCH = 64, PALL = 96, HDR = 36, SIGN = 100;
 
-  function buildLayout(key) {
+  // a position whose LI notes say CARGO DOOR / DOOR moves that hold's door next to it
+  var DOOR_RE = /\b(CARGO|CGO|BULK|BLK)?\s*DOOR\b/i;
+  function doorFromLI(slots, plan) {
+    if (!plan || !plan.pos) return null;
+    for (var i = 0; i < slots.length; i++) {
+      var o = plan.pos[slots[i].pos];
+      if (!isActive(o)) continue;
+      var notes = o.lines ? o.lines.map(function (l) { return l.notes || ''; }).join(' ') : (o.notes || '');
+      if (DOOR_RE.test(notes)) return slots[i];
+    }
+    return null;
+  }
+
+  function buildLayout(key, plan) {
     var ac = FLEET[key];
     if (!ac) return null;
     var wide = ac.kind === 'wide';
@@ -1198,7 +1211,10 @@ table.pl tr.tot td{font-weight:900;border-bottom:0}
           var pa = i * pp, pb = pa + pp;
           h.slots.push({ pos: '' + comps[c] + (j + 1) + 'P', kind: 'P', a: pa, b: pb, x: g.hx0 + 4, y: top + pa * KIN + 3, w: g.hx1 - g.hx0 - 8, h: pp * KIN - 6 });
         }
-        if (def.door != null) {
+        var li = doorFromLI(h.slots, plan);
+        if (li) {
+          L.doors.push({ y: li.y + li.h / 2, h: (def.doorW || 100) * KIN, label: 'CARGO DOOR', side: def.side, fromLI: true });
+        } else if (def.door != null) {
           var ds = typeof def.door === 'string' ? h.slots.filter(function (x) { return x.pos === def.door; })[0] : null;
           L.doors.push({ y: ds ? ds.y + ds.h / 2 : top + num(def.door) * len * KIN, h: (def.doorW || 100) * KIN, label: 'CARGO DOOR',
             side: def.side || (ds && ds.kind === 'L' ? 'L' : undefined) });
@@ -1215,6 +1231,8 @@ table.pl tr.tot td{font-weight:900;border-bottom:0}
           var cs = h.slots.filter(function (x) { return x.pos === 'C' + def.door.charAt(0); })[0];
           if (cs) dy = cs.y + cs.h * (def.door.length > 1 ? Math.min(0.8, (+def.door.charAt(1) - 0.5) / 2.5) : 0.5);
         }
+        var lib = doorFromLI(h.slots, plan);
+        if (lib) dy = lib.y + lib.h / 2;
         L.doors.push({ y: dy, h: Math.min(wide ? (def.doorW || 40) * KIN : 64, bh * 0.7), label: id === 'BULK' ? 'BULK DOOR' : 'CARGO DOOR', side: def.side });
       }
       h.top = top; h.bot = top + len * KIN;
@@ -1555,7 +1573,7 @@ table.pl tr.tot td{font-weight:900;border-bottom:0}
       if (!r || !r.plan) { toast('That load was not found', 'err'); return go('#/list'); }
       var plan = r.plan, hd = plan.hdr, on = r.type === 'on', w = W(r);
       setTheme(on ? '#0A8A8E' : '#0A2A5C');
-      var L = buildLayout(plan.ac);
+      var L = buildLayout(plan.ac, plan);
       var acn = FLEET[plan.ac] ? FLEET[plan.ac].short : (hd.acRaw || '');
       $app.innerHTML =
         '<section class="screen">' +
@@ -1576,7 +1594,15 @@ table.pl tr.tot td{font-weight:900;border-bottom:0}
       fitAc();
 
       var ctx = { r: r, L: L, paint: paint };
-      function paint() { paintOverlay(ctx); paintExtra(ctx); fitAc(); }
+      function paint() {
+        var nL = buildLayout(plan.ac, plan);
+        if (JSON.stringify(nL.doors) !== JSON.stringify(ctx.L.doors)) {
+          var old = document.querySelector('#ac svg.plane');
+          if (old) old.outerHTML = planeSvg(nL);
+        }
+        ctx.L = nL;
+        paintOverlay(ctx); paintExtra(ctx); fitAc();
+      }
       paint();
       document.getElementById('ov').addEventListener('click', function (e) {
         var b = e.target.closest('button');
@@ -1937,7 +1963,7 @@ table.pl tr.tot td{font-weight:900;border-bottom:0}
   ============================================================= */
   function viewSummary(r) {
     var plan = r.plan, hd = plan.hdr, w = W(r), on = r.type === 'on', id = r.id;
-    var L = buildLayout(plan.ac), P = progress(plan, L), dn = plan.status === 'done';
+    var L = buildLayout(plan.ac, plan), P = progress(plan, L), dn = plan.status === 'done';
     setTheme(on ? '#0A8A8E' : '#0A2A5C');
     var acn = FLEET[plan.ac] ? FLEET[plan.ac].name : (hd.acRaw || '—');
     var kv = [['FLIGHT', hd.flight], ['ROUTE', hd.route], ['DATE', hd.date], ['DEP', hd.dep], ['FIN', hd.fin], ['A/C', FLEET[plan.ac] ? FLEET[plan.ac].short : hd.acRaw],
